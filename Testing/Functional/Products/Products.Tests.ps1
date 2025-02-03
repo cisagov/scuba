@@ -273,6 +273,8 @@ Describe "Policy Checks for <ProductName>"{
             $BaselineReports = Join-Path -Path $OutputFolder -ChildPath 'BaselineReports.html'
             $Url = (Get-Item $BaselineReports).FullName
             $Driver = Start-SeChrome -Headless -Quiet -Arguments @('start-maximized', 'AcceptInsecureCertificates') -Verbose
+            Write-Warning "What data type is Driver?"
+            Write-Warning $Driver.GetType().Name
             Open-SeUrl $Url -Driver $Driver | Out-Null
         }
         Context "Execute test, <TestDescription>" -ForEach $Tests {
