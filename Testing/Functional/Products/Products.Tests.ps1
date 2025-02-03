@@ -269,21 +269,18 @@ Describe "Policy Checks for <ProductName>" {
       $PolicyResultObj = $IntermediateTestResults | Where-Object { $_.PolicyId -eq $PolicyId }
       $BaselineReports = Join-Path -Path $OutputFolder -ChildPath 'BaselineReports.html'
       $Url = (Get-Item $BaselineReports).FullName
-      $Driver = Start-SeChrome -Headless -Quiet -Arguments @('start-maximized', 'AcceptInsecureCertificates') -Verbose
+      $Driver = Start-SeChrome -Headless -Quiet -Arguments @('start-maximized', 'AcceptInsecureCertificates') -Verbose $ImplicitWait 1000
       Write-Warning "What data type is Driver?"
       Write-Warning $Driver.GetType().Name
-      Open-SeUrl $Url -Driver $Driver -Wait -Timeout 10 | Out-Null
+      Open-SeUrl $Url -Driver $Driver | Out-Null
     }
     Context "Execute test, <TestDescription>" -ForEach $Tests {
       It "Check test case results" -Tag $PolicyId {
-
         #Check intermediate output
         ($PolicyResultObj.RequirementMet).Count | Should -BeExactly 1 -Because "only expect a single result for a policy"
         $PolicyResultObj.RequirementMet | Should -Be $ExpectedResult
-
         $Details = $PolicyResultObj.ReportDetails
         $Details | Should -Not -BeNullOrEmpty -Because "expect details, $Details"
-
         if ($IsCustomImplementation){
             $Details | Should -Match 'A custom product can be used to fulfill this policy requirement.+'
         }
