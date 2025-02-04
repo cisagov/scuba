@@ -294,7 +294,7 @@ Describe "Policy Checks for <ProductName>" {
         Invoke-SeClick -Element $DetailLink
 
         # For better performance turn off implict wait
-        $Driver.Manage().Timeouts().ImplicitWait = New-TimeSpan -Seconds 0
+        # $Driver.Manage().Timeouts().ImplicitWait = New-TimeSpan -Seconds 0
 
         $Tables = Get-SeElement -Driver $Driver -By TagName 'table'
         $Tables.Count | Should -BeGreaterThan 1
