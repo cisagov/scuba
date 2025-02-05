@@ -271,7 +271,22 @@ Describe "Policy Checks for <ProductName>" {
       $Url = (Get-Item $BaselineReports).FullName
       Write-Warning "The URL is"
       Write-Warning $Url
-      $Driver = Start-SeChrome -Headless -Quiet -Arguments @('start-maximized', 'AcceptInsecureCertificates') -Verbose -ImplicitWait 1000
+      try {
+        # TODO try with 'no-sandbox' as an argument
+        $Driver = Start-SeChrome -Headless -Quiet -Arguments @('start-maximized', 'AcceptInsecureCertificates') -Verbose -ImplicitWait 1000
+        Write-Warning "What data type is Driver?"
+        Write-Warning $Driver.GetType().Name
+      }
+      # The exception is one of these 3:
+      # WebException: The operation has timed out
+      # WebDriverException: The HTTP request to the remote WebDriver server for URL http://localhost:51685/session timed out after 60 seconds.
+      # MethodInvocationException
+      catch {
+        Write-Warning "An exception occurred when starting SeChrome:"
+        Write-Warning $_.Exception
+        # Try again.  This is a very simplistic attempt to solve the problem.
+        $Driver = Start-SeChrome -Headless -Quiet -Arguments @('start-maximized', 'AcceptInsecureCertificates') -Verbose -ImplicitWait 1000
+      }
       Write-Warning "What data type is Driver?"
       Write-Warning $Driver.GetType().Name
       Open-SeUrl $Url -Driver $Driver | Out-Null
