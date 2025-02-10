@@ -17,26 +17,39 @@ These are the following steps that must be completed:
 
 Configuring a service principal is beyond the scope of these instructions, but Microsoft has documentation that may help:
 
-* [Create a service principal](https://learn.microsoft.com/en-us/entra/identity-platform/howto-create-service-principal-portal) in the Azure console.  
+* [Create a service principal](https://learn.microsoft.com/en-us/entra/identity-platform/howto-create-service-principal-portal) in the Azure console.
 * Associate a [certificate with a service principal](https://learn.microsoft.com/en-us/cli/azure/azure-cli-sp-tutorial-3)
 
 > **Note**: Take note of the AppId and the name of your tenant, as these values will be required to execute ScubaGear in non-interactive mode.
 
 The minimum permissions and roles that must be assigned to the service principal are listed in the table below.
 
-| Product                 | API Permissions                                 | Role          |
-| ----------------------- | ----------------------------------------------- | ------------- |
-| Entra ID                | Directory.Read.All, GroupMember.Read.All,       |               |
-|                         | Organization.Read.All, Policy.Read.All,         |               |
-|                         | RoleManagement.Read.Directory, User.Read.All    |               |
-|                         | PrivilegedEligibilitySchedule.Read.AzureADGroup |               |
-|                         | PrivilegedAccess.Read.AzureADGroup              |               |
-|                         | RoleManagementPolicy.Read.AzureADGroup          |               |
-| Defender for Office 365 | Exchange.ManageAsApp                            | Global Reader |
-| Exchange Online         | Exchange.ManageAsApp                            | Global Reader |
-| Power Platform          | (see below)                                     |               |
-| SharePoint Online       | Sites.FullControl.All, Directory.Read.All       |               |
-| Microsoft Teams         |                                                 | Global Reader |
+| ScubaGear Product       | API Permissions                                 | Role          | API Name                              | API APPID                             |
+| ----------------------- | ----------------------------------------------- | ------------- | ------------------------------------- | ------------------------------------- |
+| Entra ID (aad)          | Application.Read.All                            |               | Microsoft.Graph                       | 00000003-0000-0000-c000-000000000000  |
+|                         | Directory.Read.All                              |               |                                       |                                       |
+|                         | Domain.Read.All                                 |               |                                       |                                       |
+|                         | GroupMember.Read.All                            |               |                                       |                                       |
+|                         | Organization.Read.All                           |               |                                       |                                       |
+|                         | Policy.Read.All                                 |               |                                       |                                       |
+|                         | PrivilegedAccess.Read.AzureADGroup              |               |                                       |                                       |
+|                         | PrivilegedEligibilitySchedule.Read.AzureADGroup |               |                                       |                                       |
+|                         | RoleAssignmentSchedule.Read.Directory           |               |                                       |                                       |
+|                         | RoleEligibilitySchedule.Read.Directory          |               |                                       |                                       |
+|                         | RoleManagement.Read.Directory                   |               |                                       |                                       |
+|                         | RoleManagementPolicy.Read.AzureADGroup          |               |                                       |                                       |
+|                         | RoleManagementPolicy.Read.Directory             |               |                                       |                                       |
+|                         | User.Read.All                                   |               |                                       |                                       |
+| Defender                |                                                 | Global Reader |                                       |                                       |
+| Exchange (exo)          | Exchange.ManageAsApp                            | Global Reader | Office 365 Exchange Online            | 00000002-0000-0ff1-ce00-000000000000  |
+|                         | Exchange.ManageAsApp                            |               | **Microsoft Exchange Online Protection**<sup>1</sup>| **00000007-0000-0ff1-ce00-000000000000**<sup>1</sup> |
+| Power Platform          | (see below)                                     |               |                                       |                                       |
+| SharePoint              | Sites.FullControl.All                           |               | SharePoint                            | 00000003-0000-0ff1-ce00-000000000000  |
+| Microsoft Teams (teams) |                                                 | Global Reader |                                       |                                       |
+
+
+> [!IMPORTANT]
+> Required for Azure Government and DOD Tenants only (GCCH / DoD) <sup>1</sup>
 
 ## Certificate Thumbprint
 
@@ -64,9 +77,9 @@ Add-PowerAppsAccount `
 > **Note**: When testing [GCC tenants](https://learn.microsoft.com/en-us/office365/servicedescriptions/office-365-platform-service-description/office-365-us-government/gcc), use `-Endpoint usgov`.
 
 ```powershell
-# Register the service principal, giving it the 
+# Register the service principal, giving it the
 # same permissions as a tenant admin
-New-PowerAppManagementApp -ApplicationId abcdef0123456789abcde01234566789 
+New-PowerAppManagementApp -ApplicationId abcdef0123456789abcde01234566789
 ```
 
 > **Note**:  These commands must be run from an account with the Power Platform Administrator or Global Administrator roles.
